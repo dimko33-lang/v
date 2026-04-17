@@ -2,11 +2,20 @@
 set -e
 [ "$EUID" -ne 0 ]&&echo "Error: root"&&exit 1
 [ -z "$1" ]&&echo "Usage: ... | bash -s -- KEY"&&exit 1
+
+# === Удаление старой версии ===
+echo "🧹 Cleaning old V..."
+rm -rf /opt/v
+rm -f /usr/local/bin/v
+sed -i '/alias v=/d' /etc/bash.bashrc 2>/dev/null || true
+
+# === Установка ===
 apt update&&apt install -y python3 python3-pip python3-venv
 mkdir -p /opt/v&&cd /opt/v
 echo "V_API_KEY=$1">.env&&chmod 600 .env
 python3 -m venv venv&&source venv/bin/activate
 pip install --upgrade pip requests python-dotenv
+
 cat>v.py<<'EOF'
 import os,sys,json,requests
 from dotenv import load_dotenv
@@ -46,6 +55,15 @@ while True:
  if not u.strip():continue
  log(u);chat(u)
 EOF
+
 chmod +x v.py
-echo "alias v='clear && cd /opt/v && source venv/bin/activate && python v.py'" >> /etc/bash.bashrc
+
+# === Глобальная команда 'v' ===
+cat > /usr/local/bin/v << 'EOF'
+#!/bin/bash
+clear
+cd /opt/v && source venv/bin/activate && python v.py
+EOF
+chmod +x /usr/local/bin/v
+
 echo -e "\n✅ V installed. Type 'v' to enter VOID.\n"
