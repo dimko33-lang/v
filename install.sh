@@ -2,20 +2,12 @@
 set -e
 [ "$EUID" -ne 0 ]&&echo "Error: root"&&exit 1
 [ -z "$1" ]&&echo "Usage: ... | bash -s -- KEY"&&exit 1
-
-# === Удаление старой версии ===
-echo "🧹 Cleaning old V..."
-rm -rf /opt/v
-rm -f /usr/local/bin/v
-sed -i '/alias v=/d' /etc/bash.bashrc 2>/dev/null || true
-
-# === Установка ===
+echo "🧹 Cleaning old V..."&&rm -rf /opt/v&&rm -f /usr/local/bin/v&&sed -i '/alias v=/d' /etc/bash.bashrc 2>/dev/null||true
 apt update&&apt install -y python3 python3-pip python3-venv
 mkdir -p /opt/v&&cd /opt/v
 echo "V_API_KEY=$1">.env&&chmod 600 .env
 python3 -m venv venv&&source venv/bin/activate
 pip install --upgrade pip requests python-dotenv
-
 cat>v.py<<'EOF'
 import os,sys,json,requests
 from dotenv import load_dotenv
@@ -32,7 +24,9 @@ def chat(p):
  try:
   with requests.post(U,headers=h,json=d,stream=True)as r:
    r.raise_for_status()
+   print("\n- ",end="")
    full=""
+   first_chunk=True
    for l in r.iter_lines():
     if l:
      try:l=l.decode('utf-8')
@@ -42,7 +36,12 @@ def chat(p):
      if data=="[DONE]":break
      try:
       c=json.loads(data).get("choices",[{}])[0].get("delta",{}).get("content","")
-      if c:print(c,end="",flush=True);full+=c
+      if c:
+       if first_chunk:print(c,end="",flush=True);first_chunk=False
+       else:
+        if c=="\n":print("\n- ",end="",flush=True)
+        else:print(c,end="",flush=True)
+       full+=c
      except:continue
    log(full)
    print("\n")
@@ -55,15 +54,11 @@ while True:
  if not u.strip():continue
  log(u);chat(u)
 EOF
-
 chmod +x v.py
-
-# === Глобальная команда 'v' ===
 cat > /usr/local/bin/v << 'EOF'
 #!/bin/bash
 clear
 cd /opt/v && source venv/bin/activate && python v.py
 EOF
 chmod +x /usr/local/bin/v
-
 echo -e "\n✅ V installed. Type 'v' to enter VOID.\n"
