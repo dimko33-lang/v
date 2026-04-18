@@ -9,15 +9,18 @@ echo "V_API_KEY=$1">.env&&chmod 600 .env
 python3 -m venv venv&&source venv/bin/activate
 pip install --upgrade pip requests python-dotenv
 cat>v.py<<'EOF'
-import os,sys,json,requests
+import os, sys, json, requests, readline
 from dotenv import load_dotenv
+
 load_dotenv()
 A=os.getenv("V_API_KEY","").strip()
 M="kimi-k2.5"
 U="https://api.moonshot.ai/v1/chat/completions"
 L="/opt/v/v.log"
+
 def log(c):
  with open(L,'a',encoding='utf-8')as f:f.write(f"{c}\n***\n")
+
 def chat(p):
  h={"Authorization":f"Bearer {A}"}
  d={"model":M,"messages":[{"role":"user","content":p}],"stream":True}
@@ -46,10 +49,11 @@ def chat(p):
    log(full)
    print("\n")
  except Exception as e:print(f"[error] {e}");log(f"[error] {e}")
+
 print("\nV. /exit.\n")
 while True:
  try:u=input("> ")
- except:break
+ except (EOFError, KeyboardInterrupt):break
  if u.lower()in["/exit","/q"]:break
  if not u.strip():continue
  log(u);chat(u)
