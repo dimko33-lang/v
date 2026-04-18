@@ -9,8 +9,14 @@ echo "V_API_KEY=$1">.env&&chmod 600 .env
 python3 -m venv venv&&source venv/bin/activate
 pip install --upgrade pip requests python-dotenv
 cat>v.py<<'EOF'
-import os,sys,json,requests
+import os, sys, json, requests, atexit
 from dotenv import load_dotenv
+
+# === ВКЛЮЧАЕМ "ВЗРОСЛЫЙ" РЕЖИМ ВСТАВКИ ===
+sys.stdout.write("\033[?2004h")
+sys.stdout.flush()
+atexit.register(lambda: (sys.stdout.write("\033[?2004l"), sys.stdout.flush()))
+
 load_dotenv()
 A=os.getenv("V_API_KEY","").strip()
 M="kimi-k2.5"
