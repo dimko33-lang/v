@@ -9,7 +9,7 @@ echo "V_API_KEY=$1">.env&&chmod 600 .env
 python3 -m venv venv&&source venv/bin/activate
 pip install --upgrade pip requests python-dotenv
 cat>v.py<<'EOF'
-import os, sys, json, requests, atexit
+import os, sys, json, requests, atexit, re
 from dotenv import load_dotenv
 
 # === ВКЛЮЧАЕМ "ВЗРОСЛЫЙ" РЕЖИМ ВСТАВКИ ===
@@ -22,6 +22,8 @@ A=os.getenv("V_API_KEY","").strip()
 M="kimi-k2.5"
 U="https://api.moonshot.ai/v1/chat/completions"
 L="/opt/v/v.log"
+paste_re = re.compile(r'\x1b\[200~|\x1b\[201~')
+
 def log(c):
  with open(L,'a',encoding='utf-8')as f:f.write(f"{c}\n***\n")
 def chat(p):
@@ -56,6 +58,7 @@ print("\nV. /exit.\n")
 while True:
  try:u=input("> ")
  except:break
+ u = paste_re.sub('', u)
  if u.lower()in["/exit","/q"]:break
  if not u.strip():continue
  log(u);chat(u)
