@@ -9,23 +9,18 @@ echo "V_API_KEY=$1">.env&&chmod 600 .env
 python3 -m venv venv&&source venv/bin/activate
 pip install --upgrade pip requests python-dotenv
 cat>v.py<<'EOF'
-import os, sys, json, requests, atexit, re
+import os, sys, json, requests, readline
 from dotenv import load_dotenv
-
-# === ВКЛЮЧАЕМ "ВЗРОСЛЫЙ" РЕЖИМ ВСТАВКИ ===
-sys.stdout.write("\033[?2004h")
-sys.stdout.flush()
-atexit.register(lambda: (sys.stdout.write("\033[?2004l"), sys.stdout.flush()))
 
 load_dotenv()
 A=os.getenv("V_API_KEY","").strip()
 M="kimi-k2.5"
 U="https://api.moonshot.ai/v1/chat/completions"
 L="/opt/v/v.log"
-paste_re = re.compile(r'\x1b\[200~|\x1b\[201~')
 
 def log(c):
  with open(L,'a',encoding='utf-8')as f:f.write(f"{c}\n***\n")
+
 def chat(p):
  h={"Authorization":f"Bearer {A}"}
  d={"model":M,"messages":[{"role":"user","content":p}],"stream":True}
@@ -54,11 +49,11 @@ def chat(p):
    log(full)
    print("\n")
  except Exception as e:print(f"[error] {e}");log(f"[error] {e}")
+
 print("\nV. /exit.\n")
 while True:
  try:u=input("> ")
- except:break
- u = paste_re.sub('', u)
+ except (EOFError, KeyboardInterrupt):break
  if u.lower()in["/exit","/q"]:break
  if not u.strip():continue
  log(u);chat(u)
