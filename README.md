@@ -91,3 +91,4 @@ Commands
 /t — toggle thinking 
 /m — toggle memory (off = clear) 
 /c — clear
+---
