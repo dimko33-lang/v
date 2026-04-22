@@ -84,7 +84,6 @@ source ~/.bashrc && \
 python v.py
 ```
 
----
 
 -    Commands
 
