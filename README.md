@@ -1,6 +1,6 @@
 ```
 mkdir -p /opt/v && cd /opt/v && \
-echo "V_API_KEY=sk-2PU" > .env && \
+echo "V_API_KEY=XXXXXXXXXXXXX" > .env && \
 apt update && apt install -y python3 python3-pip python3-venv && \
 python3 -m venv venv && source venv/bin/activate && \
 pip install --upgrade pip requests python-dotenv prompt_toolkit && \
