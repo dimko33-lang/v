@@ -88,9 +88,7 @@ python v.py
 
 Commands
 
-/t — toggle thinking
-
-/m — toggle memory (off = clear)
-
+/t — thinking: enabled / disabled
+/m — toggle memory: on / off 
 /c — clear
 
