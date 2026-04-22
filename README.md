@@ -85,9 +85,8 @@ python v.py
 ```
 
 
->    Commands
-
--  /t — thinking: enabled / disabled
--  /m — toggle memory: on / off 
--  /c — clear
+> Commands
+/t — thinking: enabled / disabled
+/m — toggle memory: on / off 
+/c — clear
 
