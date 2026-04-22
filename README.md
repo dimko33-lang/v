@@ -89,6 +89,8 @@ python v.py
 >
 > 
 >/t — thinking: enabled / disabled
+
 >/m — toggle memory: on / off 
+
 >/c — clear
 
