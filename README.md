@@ -86,7 +86,7 @@ python v.py
 
 ---
 
-  Commands
+-    Commands
 
 -  /t — thinking: enabled / disabled
 -  /m — toggle memory: on / off 
