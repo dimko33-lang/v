@@ -89,5 +89,7 @@ python v.py
 Commands
 
 /t — toggle thinking
+
 /m — toggle memory (off = clear)
+
 /c — clear
